@@ -12,6 +12,7 @@ import getpass
 import html
 import os
 import time
+import appdirs
 
 # External dependencies.
 import hangups
@@ -70,6 +71,10 @@ class HangoutsBackend(ChatArchiveBackend):
         """The hangups client object."""
         # Make sure the directory with cached credentials exists.
         ensure_directory_exists(os.path.dirname(self.cookie_file))
+
+        dirs = appdirs.AppDirs('hangups', 'hangups')
+        token_path = os.path.join(dirs.user_cache_dir, 'refresh_token.txt')
+
         return Client(
             get_auth(
                 GoogleAccountCredentials(
@@ -81,7 +86,7 @@ class HangoutsBackend(ChatArchiveBackend):
                         description="Google account password",
                     ),
                 ),
-                RefreshTokenCache(self.cookie_file),
+                RefreshTokenCache(token_path),
             )
         )
 
